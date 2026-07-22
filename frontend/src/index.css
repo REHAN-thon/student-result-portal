@@ -1,0 +1,106 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Fraunces", ui-serif, Georgia, serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --color-ink-950: #0a0e17;
+  --color-ink-900: #0e1420;
+  --color-ink-800: #151d2e;
+  --color-ink-700: #1e2839;
+  --color-ink-600: #2b3750;
+  --color-parchment: #f5f3ee;
+  --color-parchment-dim: #c8c4b8;
+  --color-muted: #8b93a7;
+  --color-brass: #c9a227;
+  --color-brass-light: #e0bf51;
+  --color-emerald: #1f6f5c;
+  --color-emerald-light: #2f9c81;
+  --color-crimson: #b5443a;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--color-ink-900);
+  color: var(--color-parchment);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background-color: var(--color-brass);
+  color: var(--color-ink-950);
+}
+
+/* Subtle ledger-grid texture used behind full-screen panels */
+.bg-ledger {
+  background-image:
+    radial-gradient(circle at 15% 10%, rgba(201, 162, 39, 0.10), transparent 40%),
+    radial-gradient(circle at 85% 85%, rgba(31, 111, 92, 0.12), transparent 45%),
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: auto, auto, 42px 42px, 42px 42px;
+  background-color: var(--color-ink-900);
+}
+
+.glass-card {
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.seal-ring {
+  border: 1.5px dashed rgba(201, 162, 39, 0.55);
+  animation: spin-slow 40s linear infinite;
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-rise {
+  animation: rise-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-fade {
+  animation: fade-in 0.4s ease both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seal-ring, .animate-rise, .animate-fade {
+    animation: none !important;
+  }
+}
+
+/* Focus visibility for keyboard accessibility */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--color-brass-light);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.custom-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-ink-600);
+  border-radius: 8px;
+}

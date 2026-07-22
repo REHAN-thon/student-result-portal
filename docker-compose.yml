@@ -1,0 +1,35 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: srp-backend
+    restart: unless-stopped
+    environment:
+      SECRET_KEY: ${SECRET_KEY:-change-this-secret-key-in-production}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-60}
+      DATABASE_URL: sqlite:////app/data/app.db
+      UPLOAD_DIR: /app/uploads/results
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://localhost:8080}
+      DEFAULT_STUDENT_USER_ID: ${DEFAULT_STUDENT_USER_ID:-student}
+      DEFAULT_STUDENT_PASSWORD: ${DEFAULT_STUDENT_PASSWORD:-student123}
+      DEFAULT_ADMIN_USER_ID: ${DEFAULT_ADMIN_USER_ID:-admin}
+      DEFAULT_ADMIN_PASSWORD: ${DEFAULT_ADMIN_PASSWORD:-admin123}
+    volumes:
+      - backend-data:/app/data
+      - backend-uploads:/app/uploads/results
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: srp-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
+
+volumes:
+  backend-data:
+  backend-uploads:
