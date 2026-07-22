@@ -10,6 +10,9 @@ export class ApiError extends Error {
 
 const STORAGE_KEY = 'srp_session';
 
+// ✅ Your Render backend URL
+const API_BASE = 'https://student-result-portal-cmsf.onrender.com';
+
 export function saveSession(token: string, role: Role, userId: string) {
   localStorage.setItem(STORAGE_KEY + '_' + role, JSON.stringify({ token, role, userId }));
 }
@@ -34,60 +37,110 @@ async function parseError(res: Response): Promise<never> {
     const data = await res.json();
     if (data?.detail) detail = data.detail;
   } catch {
-    /* ignore parse errors */
+    // ignore parse errors
   }
   throw new ApiError(detail, res.status);
 }
 
-export async function apiPostJson<T>(path: string, body: unknown, role?: Role): Promise<T> {
-  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+export async function apiPostJson<T>(
+  path: string,
+  body: unknown,
+  role?: Role
+): Promise<T> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+
   if (role) {
     const session = getSession(role);
     if (session) headers['Authorization'] = `Bearer ${session.token}`;
   }
-  const res = await fetch(path, { method: 'POST', headers, body: JSON.stringify(body) });
+
+  const res = await fetch(`${API_BASE}${path}`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(body),
+  });
+
   if (!res.ok) return parseError(res);
   return res.json() as Promise<T>;
 }
 
-export async function apiGet<T>(path: string, role?: Role): Promise<T> {
+export async function apiGet<T>(
+  path: string,
+  role?: Role
+): Promise<T> {
   const headers: Record<string, string> = {};
+
   if (role) {
     const session = getSession(role);
     if (session) headers['Authorization'] = `Bearer ${session.token}`;
   }
-  const res = await fetch(path, { headers });
+
+  const res = await fetch(`${API_BASE}${path}`, {
+    headers,
+  });
+
   if (!res.ok) return parseError(res);
   return res.json() as Promise<T>;
 }
 
-export async function apiDelete<T>(path: string, role: Role): Promise<T> {
+export async function apiDelete<T>(
+  path: string,
+  role: Role
+): Promise<T> {
   const headers: Record<string, string> = {};
+
   const session = getSession(role);
   if (session) headers['Authorization'] = `Bearer ${session.token}`;
-  const res = await fetch(path, { method: 'DELETE', headers });
+
+  const res = await fetch(`${API_BASE}${path}`, {
+    method: 'DELETE',
+    headers,
+  });
+
   if (!res.ok) return parseError(res);
   return res.json() as Promise<T>;
 }
 
-export async function apiUpload<T>(path: string, formData: FormData, role: Role): Promise<T> {
+export async function apiUpload<T>(
+  path: string,
+  formData: FormData,
+  role: Role
+): Promise<T> {
   const headers: Record<string, string> = {};
+
   const session = getSession(role);
   if (session) headers['Authorization'] = `Bearer ${session.token}`;
-  const res = await fetch(path, { method: 'POST', headers, body: formData });
+
+  const res = await fetch(`${API_BASE}${path}`, {
+    method: 'POST',
+    headers,
+    body: formData,
+  });
+
   if (!res.ok) return parseError(res);
   return res.json() as Promise<T>;
 }
 
 export function resultPdfUrl(rollNumber: string): string {
-  return `/api/results/${encodeURIComponent(rollNumber)}/pdf`;
+  return `${API_BASE}/api/results/${encodeURIComponent(rollNumber)}/pdf`;
 }
 
 export async function fetchPdfBlob(rollNumber: string): Promise<Blob> {
   const session = getSession('student');
+
   const headers: Record<string, string> = {};
-  if (session) headers['Authorization'] = `Bearer ${session.token}`;
-  const res = await fetch(resultPdfUrl(rollNumber), { headers });
+
+  if (session) {
+    headers['Authorization'] = `Bearer ${session.token}`;
+  }
+
+  const res = await fetch(resultPdfUrl(rollNumber), {
+    headers,
+  });
+
   if (!res.ok) return parseError(res);
+
   return res.blob();
 }
