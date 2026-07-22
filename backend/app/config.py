@@ -19,7 +19,10 @@ MAX_UPLOAD_SIZE_MB = int(os.getenv("MAX_UPLOAD_SIZE_MB", "10"))
 # --- CORS ---
 CORS_ORIGINS = os.getenv(
     "CORS_ORIGINS",
-    "http://localhost:5173,http://localhost:3000,https://student-result-portal-hy5sbm59u-rehan-thons-projects.vercel.app"
+    "http://localhost:5173,"
+    "http://localhost:3000,"
+    "https://student-result-portal-vert.vercel.app,"
+    "https://student-result-portal-hy5sbm59u-rehan-thons-projects.vercel.app"
 ).split(",")
 
 # --- Default seed credentials (change after first login) ---
